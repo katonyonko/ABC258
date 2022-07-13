@@ -34,10 +34,19 @@ for __ in range(case_no):
     return c
   N=int(input())
   A=[input() for _ in range(N)]
-  A=[sum([1<<j for j in range(N) if A[i][j]=='1']) for i in range(N)]
+  M=(N-1)//63+1
+  Ad=[[0]*M for i in range(N)]
+  for i in range(N):
+    for j in range(M):
+      bit=0
+      for k in range(63 if j<(N-1)//63 else (N-1)%63+1):
+        if j*63+k>i and A[i][j*63+k]=='1':
+          bit|=1<<k
+      Ad[i][j]=bit
   ans=0
   for i in range(N):
     for j in range(i+1,N):
-      if (A[i]>>j)&1==0: continue
-      ans+=Popcount(A[i]&A[j])
-  print(ans//3)
+      if A[i][j]=='0': continue
+      for k in range((N-1)//63+1):
+        ans+=Popcount(Ad[i][k]&Ad[j][k])
+  print(ans)
